@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ title or 'Лента Дня' }}</title>
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <a class="logo" href="/">Лента Дня</a>
+  <form method="get" action="/" class="search">
+    <input name="q" value="{{ q or '' }}" placeholder="Поиск новостей" />
+    <button type="submit">Найти</button>
+  </form>
+  <nav>
+    {% if current_user %}
+      <span class="hello">{{ current_user.name }}</span>
+      {% if current_user.role == 'admin' %}<a href="/admin">Админ</a>{% endif %}
+      <form method="post" action="/auth/logout"><button>Выйти</button></form>
+    {% else %}
+      <a href="/auth/login">Вход</a>
+      <a href="/auth/register">Регистрация</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="container">
+  {% block content %}{% endblock %}
+</main>
+</body>
+</html>

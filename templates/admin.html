@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Панель администратора</h1>
+
+<section class="admin-grid">
+  <div>
+    <h2>Новая новость</h2>
+    <form method="post" action="/admin/news/create" class="stack">
+      <input name="title" placeholder="Заголовок" required minlength="5" />
+      <textarea name="content" placeholder="Текст новости" required minlength="20"></textarea>
+      <label class="inline"><input type="checkbox" name="is_published" checked /> Опубликовать</label>
+      <button>Создать</button>
+    </form>
+  </div>
+
+  <div>
+    <h2>Пользователи</h2>
+    {% for u in users %}
+      <article class="admin-item">
+        <p><strong>{{ u.name }}</strong> ({{ u.email }}) · {{ u.role }} {% if u.is_blocked %}· заблокирован{% endif %}</p>
+        {% if u.role != 'admin' %}
+          <form method="post" action="/admin/users/{{ u.id }}/toggle-block"><button>{% if u.is_blocked %}Разблокировать{% else %}Заблокировать{% endif %}</button></form>
+          <form method="post" action="/admin/users/{{ u.id }}/delete" onsubmit="return confirm('Удалить пользователя?')"><button>Удалить</button></form>
+        {% endif %}
+      </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section>
+  <h2>Новости</h2>
+  {% for n in news %}
+    <article class="admin-item">
+      <form method="post" action="/admin/news/{{ n.id }}/edit" class="stack">
+        <input name="title" value="{{ n.title }}" required />
+        <textarea name="content" required>{{ n.content }}</textarea>
+        <label class="inline"><input type="checkbox" name="is_published" {% if n.is_published %}checked{% endif %} /> Опубликована</label>
+        <button>Сохранить</button>
+      </form>
+      <form method="post" action="/admin/news/{{ n.id }}/delete" onsubmit="return confirm('Удалить новость?')"><button>Удалить новость</button></form>
+    </article>
+  {% endfor %}
+</section>
+
+<section>
+  <h2>Последние комментарии</h2>
+  {% for c in comments %}
+    <article class="admin-item">
+      <p>{{ c.body }}</p>
+      <p class="meta">{{ c.author.name }} · новость #{{ c.news_id }}</p>
+      <form method="post" action="/admin/comments/{{ c.id }}/delete"><button>Удалить комментарий</button></form>
+    </article>
+  {% endfor %}
+</section>
+{% endblock %}

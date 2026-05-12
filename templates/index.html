@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+{% block content %}
+<h1>Свежие новости</h1>
+{% if news %}
+  <section class="cards">
+    {% for item in news %}
+      <article class="card">
+        <h2><a href="/news/{{ item.id }}">{{ item.title }}</a></h2>
+        <p class="meta">{{ item.created_at.strftime('%d.%m.%Y %H:%M') }}{% if item.author %} · {{ item.author.name }}{% endif %}</p>
+        <p>{{ item.content[:220] }}{% if item.content|length > 220 %}...{% endif %}</p>
+        <p class="rating">Рейтинг: {{ ratings.get(item.id, 0) }}</p>
+      </article>
+    {% endfor %}
+  </section>
+{% else %}
+  <p>Новостей пока нет.</p>
+{% endif %}
+{% endblock %}

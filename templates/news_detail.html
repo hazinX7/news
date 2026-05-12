@@ -1,0 +1,38 @@
+{% extends 'base.html' %}
+{% block content %}
+<article class="article">
+  <h1>{{ item.title }}</h1>
+  <p class="meta">{{ item.created_at.strftime('%d.%m.%Y %H:%M') }}{% if item.author %} · {{ item.author.name }}{% endif %}</p>
+  <div class="content">{{ item.content }}</div>
+  <p class="rating">Рейтинг: {{ rating }}</p>
+
+  {% if current_user %}
+    <div class="actions">
+      <form method="post" action="/news/{{ item.id }}/react"><input type="hidden" name="value" value="1" /><button>👍 Лайк</button></form>
+      <form method="post" action="/news/{{ item.id }}/react"><input type="hidden" name="value" value="-1" /><button>👎 Дизлайк</button></form>
+    </div>
+
+    <form method="post" action="/news/{{ item.id }}/comment" class="comment-form">
+      <textarea name="body" required minlength="2" placeholder="Ваш комментарий"></textarea>
+      <button>Отправить</button>
+    </form>
+  {% else %}
+    <p>Чтобы комментировать и оценивать, выполните вход.</p>
+  {% endif %}
+</article>
+
+<section>
+  <h2>Комментарии</h2>
+  {% for c in comments %}
+    <article class="comment">
+      <p>{{ c.body }}</p>
+      <p class="meta">{{ c.author.name }} · {{ c.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
+      {% if current_user and (current_user.role == 'admin' or current_user.id == c.author_id) %}
+      <form method="post" action="/comments/{{ c.id }}/delete"><button>Удалить</button></form>
+      {% endif %}
+    </article>
+  {% else %}
+    <p>Комментариев пока нет.</p>
+  {% endfor %}
+</section>
+{% endblock %}
