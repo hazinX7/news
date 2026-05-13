@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>{{ title or 'Лента Дня' }}</title>
-  <link rel="stylesheet" href="/static/styles.css" />
+  <link rel="stylesheet" href="/static/styles.css?v=20260513-2" />
 </head>
 <body>
 <header class="topbar">
@@ -16,7 +16,7 @@
   <nav>
     {% if current_user %}
       <span class="hello">{{ current_user.name }}</span>
-      {% if current_user.role == 'admin' %}<a href="/admin">Админ</a>{% endif %}
+      {% if current_user.role in ['admin', 'editor'] %}<a href="/admin">Панель</a>{% endif %}
       <form method="post" action="/auth/logout"><button>Выйти</button></form>
     {% else %}
       <a href="/auth/login">Вход</a>

@@ -6,9 +6,9 @@
     {% for item in news %}
       <article class="card">
         <h2><a href="/news/{{ item.id }}">{{ item.title }}</a></h2>
-        <p class="meta">{{ item.created_at.strftime('%d.%m.%Y %H:%M') }}{% if item.author %} · {{ item.author.name }}{% endif %}</p>
+        <p class="meta">Дата публикаци: {{ item.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
         <p>{{ item.content[:220] }}{% if item.content|length > 220 %}...{% endif %}</p>
-        <p class="rating">Рейтинг: {{ ratings.get(item.id, 0) }}</p>
+        <p class="rating">👍 {{ reactions.get(item.id, {}).get('likes', 0) }} · 👎 {{ reactions.get(item.id, {}).get('dislikes', 0) }}</p>
       </article>
     {% endfor %}
   </section>

@@ -3,7 +3,7 @@
 <h1>Регистрация</h1>
 {% if error %}<p class="error">{{ error }}</p>{% endif %}
 <form method="post" class="auth">
-  <label>Имя<input type="text" name="name" minlength="2" required /></label>
+  <label>Имя пользователя<input type="text" name="name" minlength="2" required /></label>
   <label>E-mail<input type="email" name="email" required /></label>
   <label>Пароль<input type="password" name="password" minlength="6" required /></label>
   <button>Зарегистрироваться</button>
