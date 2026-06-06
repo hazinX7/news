@@ -45,7 +45,7 @@ def admin_news_create(
     return redirect("/admin")
 
 
-@router.post("/news/{news_id}/edit")
+@router.patch("/news/{news_id}/edit")
 def admin_news_edit(
     news_id: int,
     request: Request,
@@ -66,7 +66,7 @@ def admin_news_edit(
     return redirect("/admin")
 
 
-@router.post("/news/{news_id}/delete")
+@router.delete("/news/{news_id}/delete")
 def admin_news_delete(news_id: int, request: Request, db: Session = Depends(get_db)):
     user = get_current_user(request, db)
     require_editor_or_admin(user)
@@ -77,7 +77,7 @@ def admin_news_delete(news_id: int, request: Request, db: Session = Depends(get_
     return redirect("/admin")
 
 
-@router.post("/users/{user_id}/toggle-block")
+@router.patch("/users/{user_id}/toggle-block")
 def admin_toggle_block(user_id: int, request: Request, db: Session = Depends(get_db)):
     user = get_current_user(request, db)
     require_admin(user)
@@ -89,7 +89,7 @@ def admin_toggle_block(user_id: int, request: Request, db: Session = Depends(get
     return redirect("/admin")
 
 
-@router.post("/users/{user_id}/delete")
+@router.delete("/users/{user_id}/delete")
 def admin_delete_user(user_id: int, request: Request, db: Session = Depends(get_db)):
     user = get_current_user(request, db)
     require_admin(user)
@@ -100,7 +100,7 @@ def admin_delete_user(user_id: int, request: Request, db: Session = Depends(get_
     return redirect("/admin")
 
 
-@router.post("/comments/{comment_id}/delete")
+@router.delete("/comments/{comment_id}/delete")
 def admin_delete_comment(comment_id: int, request: Request, db: Session = Depends(get_db)):
     user = get_current_user(request, db)
     require_editor_or_admin(user)

@@ -26,8 +26,8 @@
         <article class="admin-item">
           <p><strong>{{ u.name }}</strong> ({{ u.email }}) · {{ u.role }} {% if u.is_blocked %}· заблокирован{% endif %}</p>
           {% if u.role != 'admin' %}
-            <form method="post" action="/admin/users/{{ u.id }}/toggle-block"><button>{% if u.is_blocked %}Разблокировать{% else %}Заблокировать{% endif %}</button></form>
-            <form method="post" action="/admin/users/{{ u.id }}/delete" onsubmit="return confirm('Удалить пользователя?')"><button>Удалить</button></form>
+            <form method="post" action="/admin/users/{{ u.id }}/toggle-block" data-method="patch"><button>{% if u.is_blocked %}Разблокировать{% else %}Заблокировать{% endif %}</button></form>
+            <form method="post" action="/admin/users/{{ u.id }}/delete" data-method="delete" data-confirm="Удалить пользователя?"><button>Удалить</button></form>
           {% endif %}
         </article>
       {% endfor %}
@@ -39,7 +39,7 @@
   <h2>Новости</h2>
   {% for n in news %}
     <article class="admin-item">
-      <form method="post" action="/admin/news/{{ n.id }}/edit" class="stack news-form">
+      <form method="post" action="/admin/news/{{ n.id }}/edit" class="stack news-form" data-method="patch">
         <input name="title" value="{{ n.title }}" required />
         <textarea name="content" required>{{ n.content }}</textarea>
         <div class="publish-row">
@@ -50,7 +50,7 @@
         </div>
         <button>Сохранить</button>
       </form>
-      <form method="post" action="/admin/news/{{ n.id }}/delete" onsubmit="return confirm('Удалить новость?')" class="delete-form"><button>Удалить новость</button></form>
+      <form method="post" action="/admin/news/{{ n.id }}/delete" class="delete-form" data-method="delete" data-confirm="Удалить новость?"><button>Удалить новость</button></form>
     </article>
   {% endfor %}
 </section>
@@ -61,7 +61,7 @@
     <article class="admin-item">
       <p>{{ c.body }}</p>
       <p class="meta">{{ c.author.name }} · новость #{{ c.news_id }}</p>
-      <form method="post" action="/admin/comments/{{ c.id }}/delete"><button>Удалить комментарий</button></form>
+      <form method="post" action="/admin/comments/{{ c.id }}/delete" data-method="delete"><button>Удалить комментарий</button></form>
     </article>
   {% endfor %}
 </section>

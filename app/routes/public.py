@@ -115,7 +115,7 @@ def news_detail(news_id: int, request: Request, db: Session = Depends(get_db)):
     )
 
 
-@router.post("/news/{news_id}/react")
+@router.patch("/news/{news_id}/react")
 def react(news_id: int, request: Request, value: int = Form(...), db: Session = Depends(get_db)):
     user = get_current_user(request, db)
     require_auth(user)
@@ -146,7 +146,7 @@ def add_comment(news_id: int, request: Request, body: str = Form(...), db: Sessi
     return redirect(f"/news/{news_id}")
 
 
-@router.post("/comments/{comment_id}/react")
+@router.patch("/comments/{comment_id}/react")
 def react_comment(comment_id: int, request: Request, value: int = Form(...), db: Session = Depends(get_db)):
     user = get_current_user(request, db)
     require_auth(user)
@@ -164,7 +164,7 @@ def react_comment(comment_id: int, request: Request, value: int = Form(...), db:
     return redirect(f"/news/{comment.news_id}")
 
 
-@router.post("/comments/{comment_id}/delete")
+@router.delete("/comments/{comment_id}/delete")
 def delete_comment(comment_id: int, request: Request, db: Session = Depends(get_db)):
     user = get_current_user(request, db)
     require_auth(user)

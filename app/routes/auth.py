@@ -81,7 +81,7 @@ def login(
     return redirect("/")
 
 
-@router.post("/logout")
+@router.delete("/logout")
 def logout(request: Request):
     request.session.clear()
     return redirect("/")

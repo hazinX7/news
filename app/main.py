@@ -19,6 +19,13 @@ app.include_router(auth_router)
 app.include_router(admin_router)
 
 
+@app.middleware("http")
+async def add_security_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["X-Frame-Options"] = "DENY"
+    return response
+
+
 @app.on_event("startup")
 def on_startup() -> None:
     Base.metadata.create_all(bind=engine)

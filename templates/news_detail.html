@@ -8,8 +8,8 @@
 
   {% if current_user %}
     <div class="actions">
-      <form method="post" action="/news/{{ item.id }}/react"><input type="hidden" name="value" value="1" /><button>👍 Лайк</button></form>
-      <form method="post" action="/news/{{ item.id }}/react"><input type="hidden" name="value" value="-1" /><button>👎 Дизлайк</button></form>
+      <form method="post" action="/news/{{ item.id }}/react" data-method="patch"><input type="hidden" name="value" value="1" /><button>👍 Лайк</button></form>
+      <form method="post" action="/news/{{ item.id }}/react" data-method="patch"><input type="hidden" name="value" value="-1" /><button>👎 Дизлайк</button></form>
     </div>
 
     <form method="post" action="/news/{{ item.id }}/comment" class="comment-form">
@@ -30,13 +30,13 @@
       <p class="rating">Лайки: {{ comment_reactions.get(c.id, {}).get('likes', 0) }} · Дизлайки: {{ comment_reactions.get(c.id, {}).get('dislikes', 0) }}</p>
       {% if current_user %}
       <div class="actions">
-        <form method="post" action="/comments/{{ c.id }}/react"><input type="hidden" name="value" value="1" /><button>👍 Лайк</button></form>
-        <form method="post" action="/comments/{{ c.id }}/react"><input type="hidden" name="value" value="-1" /><button>👎 Дизлайк</button></form>
+        <form method="post" action="/comments/{{ c.id }}/react" data-method="patch"><input type="hidden" name="value" value="1" /><button>👍 Лайк</button></form>
+        <form method="post" action="/comments/{{ c.id }}/react" data-method="patch"><input type="hidden" name="value" value="-1" /><button>👎 Дизлайк</button></form>
       </div>
       {% endif %}
       <p class="meta comment-time">{{ c.created_at.strftime('%d.%m.%Y %H:%M') }}</p>
       {% if current_user and (current_user.role == 'admin' or current_user.id == c.author_id) %}
-      <form method="post" action="/comments/{{ c.id }}/delete"><button>Удалить</button></form>
+      <form method="post" action="/comments/{{ c.id }}/delete" data-method="delete"><button>Удалить</button></form>
       {% endif %}
     </article>
   {% else %}

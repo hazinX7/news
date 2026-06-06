@@ -36,6 +36,12 @@ def test_admin_login_page_available():
         assert "Вход" in r.text
 
 
+def test_x_frame_options_header_is_deny():
+    with TestClient(app) as client:
+        r = client.get("/")
+        assert r.headers["x-frame-options"] == "DENY"
+
+
 def test_register_rejects_existing_email():
     name = f"User{uuid.uuid4().hex[:8]}"
     email = f"user-{uuid.uuid4().hex[:8]}@example.com"
@@ -123,5 +129,5 @@ def test_editor_permissions():
         assert r.status_code == 200
         assert "Панель контента" in r.text
 
-        r = client.post("/admin/users/1/delete", follow_redirects=False)
+        r = client.delete("/admin/users/1/delete", follow_redirects=False)
         assert r.status_code == 403

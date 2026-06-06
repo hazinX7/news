@@ -85,5 +85,101 @@ WHERE NOT EXISTS (
     SELECT 1 FROM news WHERE news.title = seed_news.title
 );
 
+WITH seed_comments(news_title, user_email, body, created_at) AS (
+    VALUES
+        ('Город обновил расписание общественного транспорта', 'anna@example.local', 'Удобно, если интервалы действительно станут меньше утром.', TIMESTAMP '2026-05-02 10:25:00'),
+        ('Город обновил расписание общественного транспорта', 'igor@example.local', 'Хотелось бы увидеть подробную схему изменений по маршрутам.', TIMESTAMP '2026-05-02 10:42:00'),
+        ('В регионе открыли новый центр цифровых сервисов', 'maria@example.local', 'Такие консультации особенно полезны пожилым людям.', TIMESTAMP '2026-05-03 12:05:00'),
+        ('В регионе открыли новый центр цифровых сервисов', 'pavel@example.local', 'Главное, чтобы специалисты помогали не только по записи.', TIMESTAMP '2026-05-03 12:18:00'),
+        ('Школьники представили проекты по экологии', 'olga@example.local', 'Интересно было бы внедрить лучшие проекты в школах города.', TIMESTAMP '2026-05-04 14:00:00'),
+        ('Медики напомнили о сезонной профилактике', 'denis@example.local', 'Полезное напоминание, особенно в период перепадов погоды.', TIMESTAMP '2026-05-05 10:20:00'),
+        ('В парке начались работы по благоустройству', 'elena@example.local', 'Надеюсь, новые дорожки сделают удобными для колясок.', TIMESTAMP '2026-05-06 16:05:00'),
+        ('В парке начались работы по благоустройству', 'nikita@example.local', 'Освещение в парке давно требовало обновления.', TIMESTAMP '2026-05-06 16:27:00'),
+        ('Университет объявил набор на летние курсы', 'anna@example.local', 'Курсы по анализу данных звучат очень актуально.', TIMESTAMP '2026-05-07 12:45:00'),
+        ('В библиотеке пройдет неделя научной литературы', 'igor@example.local', 'Хороший формат для студентов перед летней практикой.', TIMESTAMP '2026-05-08 17:05:00'),
+        ('Спортсмены региона выиграли межвузовский турнир', 'maria@example.local', 'Поздравления команде, отличный результат.', TIMESTAMP '2026-05-09 18:30:00'),
+        ('Эксперты обсудили защиту персональных данных', 'pavel@example.local', 'Тему безопасности стоит чаще объяснять простым языком.', TIMESTAMP '2026-05-10 15:10:00'),
+        ('Эксперты обсудили защиту персональных данных', 'olga@example.local', 'Было бы полезно опубликовать краткие рекомендации после круглого стола.', TIMESTAMP '2026-05-10 15:45:00'),
+        ('На набережной запланировали праздничную программу', 'denis@example.local', 'Если транспорт усилят, будет намного проще добраться вечером.', TIMESTAMP '2026-05-11 20:00:00'),
+        ('На набережной запланировали праздничную программу', 'elena@example.local', 'Ждем программу мероприятий по времени.', TIMESTAMP '2026-05-11 20:22:00')
+)
+INSERT INTO comments (body, news_id, author_id, created_at)
+SELECT seed_comments.body, news.id, users.id, seed_comments.created_at
+FROM seed_comments
+JOIN news ON news.title = seed_comments.news_title
+JOIN users ON users.email = seed_comments.user_email
+WHERE NOT EXISTS (
+    SELECT 1
+    FROM comments
+    WHERE comments.body = seed_comments.body
+      AND comments.news_id = news.id
+      AND comments.author_id = users.id
+);
+
+WITH seed_reactions(news_title, user_email, value) AS (
+    VALUES
+        ('Город обновил расписание общественного транспорта', 'anna@example.local', 1),
+        ('Город обновил расписание общественного транспорта', 'igor@example.local', 1),
+        ('Город обновил расписание общественного транспорта', 'pavel@example.local', -1),
+        ('В регионе открыли новый центр цифровых сервисов', 'maria@example.local', 1),
+        ('В регионе открыли новый центр цифровых сервисов', 'olga@example.local', 1),
+        ('В регионе открыли новый центр цифровых сервисов', 'denis@example.local', 1),
+        ('Школьники представили проекты по экологии', 'anna@example.local', 1),
+        ('Школьники представили проекты по экологии', 'elena@example.local', 1),
+        ('Медики напомнили о сезонной профилактике', 'igor@example.local', 1),
+        ('Медики напомнили о сезонной профилактике', 'nikita@example.local', -1),
+        ('В парке начались работы по благоустройству', 'maria@example.local', 1),
+        ('В парке начались работы по благоустройству', 'pavel@example.local', 1),
+        ('Университет объявил набор на летние курсы', 'olga@example.local', 1),
+        ('Университет объявил набор на летние курсы', 'denis@example.local', 1),
+        ('В библиотеке пройдет неделя научной литературы', 'elena@example.local', 1),
+        ('В библиотеке пройдет неделя научной литературы', 'nikita@example.local', 1),
+        ('Спортсмены региона выиграли межвузовский турнир', 'anna@example.local', 1),
+        ('Спортсмены региона выиграли межвузовский турнир', 'igor@example.local', 1),
+        ('Эксперты обсудили защиту персональных данных', 'maria@example.local', 1),
+        ('Эксперты обсудили защиту персональных данных', 'pavel@example.local', -1),
+        ('На набережной запланировали праздничную программу', 'olga@example.local', 1),
+        ('На набережной запланировали праздничную программу', 'denis@example.local', 1),
+        ('На набережной запланировали праздничную программу', 'elena@example.local', 1)
+)
+INSERT INTO likes (news_id, user_id, value)
+SELECT news.id, users.id, seed_reactions.value
+FROM seed_reactions
+JOIN news ON news.title = seed_reactions.news_title
+JOIN users ON users.email = seed_reactions.user_email
+ON CONFLICT (news_id, user_id) DO UPDATE SET
+    value = EXCLUDED.value;
+
+WITH seed_comment_reactions(comment_body, user_email, value) AS (
+    VALUES
+        ('Удобно, если интервалы действительно станут меньше утром.', 'igor@example.local', 1),
+        ('Удобно, если интервалы действительно станут меньше утром.', 'maria@example.local', 1),
+        ('Хотелось бы увидеть подробную схему изменений по маршрутам.', 'anna@example.local', 1),
+        ('Такие консультации особенно полезны пожилым людям.', 'pavel@example.local', 1),
+        ('Главное, чтобы специалисты помогали не только по записи.', 'olga@example.local', -1),
+        ('Интересно было бы внедрить лучшие проекты в школах города.', 'denis@example.local', 1),
+        ('Полезное напоминание, особенно в период перепадов погоды.', 'elena@example.local', 1),
+        ('Надеюсь, новые дорожки сделают удобными для колясок.', 'nikita@example.local', 1),
+        ('Освещение в парке давно требовало обновления.', 'anna@example.local', 1),
+        ('Курсы по анализу данных звучат очень актуально.', 'igor@example.local', 1),
+        ('Хороший формат для студентов перед летней практикой.', 'maria@example.local', 1),
+        ('Поздравления команде, отличный результат.', 'pavel@example.local', 1),
+        ('Тему безопасности стоит чаще объяснять простым языком.', 'olga@example.local', 1),
+        ('Было бы полезно опубликовать краткие рекомендации после круглого стола.', 'denis@example.local', 1),
+        ('Если транспорт усилят, будет намного проще добраться вечером.', 'elena@example.local', 1),
+        ('Ждем программу мероприятий по времени.', 'nikita@example.local', 1),
+        ('Ждем программу мероприятий по времени.', 'anna@example.local', -1)
+)
+INSERT INTO comment_likes (comment_id, user_id, value)
+SELECT comments.id, users.id, seed_comment_reactions.value
+FROM seed_comment_reactions
+JOIN comments ON comments.body = seed_comment_reactions.comment_body
+JOIN users ON users.email = seed_comment_reactions.user_email
+ON CONFLICT (comment_id, user_id) DO UPDATE SET
+    value = EXCLUDED.value;
+
 SELECT setval(pg_get_serial_sequence('users', 'id'), GREATEST((SELECT MAX(id) FROM users), 1), TRUE);
 SELECT setval(pg_get_serial_sequence('news', 'id'), GREATEST((SELECT MAX(id) FROM news), 1), TRUE);
+SELECT setval(pg_get_serial_sequence('comments', 'id'), GREATEST(COALESCE((SELECT MAX(id) FROM comments), 1), 1), TRUE);
+SELECT setval(pg_get_serial_sequence('likes', 'id'), GREATEST(COALESCE((SELECT MAX(id) FROM likes), 1), 1), TRUE);
+SELECT setval(pg_get_serial_sequence('comment_likes', 'id'), GREATEST(COALESCE((SELECT MAX(id) FROM comment_likes), 1), 1), TRUE);

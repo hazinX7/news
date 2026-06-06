@@ -17,7 +17,7 @@
     {% if current_user %}
       <span class="hello">{{ current_user.name }}</span>
       {% if current_user.role in ['admin', 'editor'] %}<a href="/admin">Панель</a>{% endif %}
-      <form method="post" action="/auth/logout"><button>Выйти</button></form>
+      <form method="post" action="/auth/logout" data-method="delete"><button>Выйти</button></form>
     {% else %}
       <a href="/auth/login">Вход</a>
       <a href="/auth/register">Регистрация</a>
@@ -27,5 +27,50 @@
 <main class="container">
   {% block content %}{% endblock %}
 </main>
+<script>
+  document.addEventListener("submit", async (event) => {
+    const form = event.target;
+    if (!(form instanceof HTMLFormElement) || !form.dataset.method) {
+      return;
+    }
+
+    if (form.dataset.confirm && !window.confirm(form.dataset.confirm)) {
+      return;
+    }
+
+    event.preventDefault();
+
+    const submitter = event.submitter;
+    if (submitter) {
+      submitter.disabled = true;
+    }
+
+    try {
+      const method = form.dataset.method.toUpperCase();
+      const options = { method, credentials: "same-origin" };
+      if (method !== "DELETE") {
+        options.body = new FormData(form);
+      }
+
+      const response = await fetch(form.action, options);
+      if (response.redirected) {
+        window.location.assign(response.url);
+        return;
+      }
+      if (response.ok) {
+        window.location.reload();
+        return;
+      }
+
+      document.open();
+      document.write(await response.text());
+      document.close();
+    } finally {
+      if (submitter) {
+        submitter.disabled = false;
+      }
+    }
+  });
+</script>
 </body>
 </html>
