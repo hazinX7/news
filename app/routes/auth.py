@@ -32,22 +32,26 @@ def register(
 ):
     clean_name = name.strip()
     clean_email = email.strip().lower()
+
     if contains_cyrillic(clean_name):
         return render(request, "register.html", {"db": db, "error": "Имя пользователя не должно содержать русские символы"})
     if contains_cyrillic(clean_email):
         return render(request, "register.html", {"db": db, "error": "E-mail не должен содержать русские символы"})
 
+    if clean_email and db.query(User).filter(func.lower(User.email) == clean_email).first():
+        return render(request, "register.html", {"db": db, "error": "Пользователь с таким email уже существует в системе"})
+    if clean_name and db.query(User).filter(func.lower(User.name) == clean_name.lower()).first():
+        return render(request, "register.html", {"db": db, "error": "Пользователь с таким username уже существует в системе"})
+
+    if len(clean_name) < 2:
+        return render(request, "register.html", {"db": db, "error": "Имя пользователя должно быть от 2 символов"})
+    if len(password) < 6:
+        return render(request, "register.html", {"db": db, "error": "Пароль должен быть от 6 символов"})
+
     try:
         form = RegisterForm(name=clean_name, email=clean_email, password=password)
     except ValidationError:
         return render(request, "register.html", {"db": db, "error": "Проверьте корректность e-mail"})
-
-    if len(form.name) < 2 or len(password) < 6:
-        return render(request, "register.html", {"db": db, "error": "Имя от 2 символов, пароль от 6 символов"})
-    if db.query(User).filter(User.email == form.email).first():
-        return render(request, "register.html", {"db": db, "error": "Пользователь с таким email уже существует в системе"})
-    if db.query(User).filter(func.lower(User.name) == form.name.lower()).first():
-        return render(request, "register.html", {"db": db, "error": "Пользователь с таким username уже существует в системе"})
 
     user = User(name=form.name, email=form.email, password_hash=sha256(password), role="user")
     db.add(user)

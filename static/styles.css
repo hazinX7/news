@@ -99,6 +99,14 @@ h1, h2 { margin-top: 0; margin-bottom: 14px; }
 .auth { display: grid; gap: 10px; max-width: 420px; }
 .auth label, .stack { display: grid; gap: 8px; }
 .error { color: var(--error); }
+.error-list {
+  color: var(--error);
+  margin: 0 0 14px;
+  padding-left: 20px;
+}
+.error-list li + li {
+  margin-top: 6px;
+}
 .admin-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
 .inline { display: flex; gap: 8px; align-items: center; }
 .inline input[type="checkbox"] {

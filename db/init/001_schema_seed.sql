@@ -46,16 +46,16 @@ CREATE INDEX IF NOT EXISTS ix_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS ix_news_title ON news(title);
 
 INSERT INTO users (name, email, password_hash, role, is_blocked, created_at) VALUES
-    ('Администратор', 'admin@lentadnya.local', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'admin', FALSE, '2026-05-01 09:00:00'),
-    ('Редактор', 'editor@lentadnya.local', 'ef5e5a1fb95055e0e56cccf98a41e784a132c14e7f6e1ba244302f0e72b29baf', 'editor', FALSE, '2026-05-01 09:05:00'),
-    ('Анна Сергеева', 'anna@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:10:00'),
-    ('Игорь Кулагин', 'igor@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:15:00'),
-    ('Мария Тихонова', 'maria@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:20:00'),
-    ('Павел Орлов', 'pavel@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:25:00'),
-    ('Ольга Романова', 'olga@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:30:00'),
-    ('Денис Волков', 'denis@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:35:00'),
-    ('Елена Морозова', 'elena@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:40:00'),
-    ('Никита Лебедев', 'nikita@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:45:00')
+    ('admin', 'admin@lentadnya.local', '240be518fabd2724ddb6f04eeb1da5967448d7e831c08c8fa822809f74c720a9', 'admin', FALSE, '2026-05-01 09:00:00'),
+    ('editor', 'editor@lentadnya.local', 'ef5e5a1fb95055e0e56cccf98a41e784a132c14e7f6e1ba244302f0e72b29baf', 'editor', FALSE, '2026-05-01 09:05:00'),
+    ('anna', 'anna@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:10:00'),
+    ('igor', 'igor@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:15:00'),
+    ('maria', 'maria@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:20:00'),
+    ('pavel', 'pavel@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:25:00'),
+    ('olga', 'olga@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:30:00'),
+    ('denis', 'denis@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:35:00'),
+    ('elena', 'elena@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:40:00'),
+    ('nikita', 'nikita@example.local', 'd785d63511a645a24875a109e0ef1da6560dd94d149b6734949a96556cb3449f', 'user', FALSE, '2026-05-01 09:45:00')
 ON CONFLICT (email) DO UPDATE SET
     name = EXCLUDED.name,
     password_hash = EXCLUDED.password_hash,

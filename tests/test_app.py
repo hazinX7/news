@@ -81,6 +81,26 @@ def test_register_rejects_cyrillic_name_and_email():
         assert "E-mail не должен содержать русские символы" in r.text
 
 
+def test_register_prioritizes_existing_email_over_email_format():
+    with TestClient(app) as client:
+        r = client.post(
+            "/auth/register",
+            data={"name": f"User{uuid.uuid4().hex[:8]}", "email": "admin@lentadnya.local", "password": "secret12"},
+        )
+        assert "Пользователь с таким email уже существует в системе" in r.text
+        assert "Проверьте корректность e-mail" not in r.text
+
+
+def test_register_prioritizes_existing_username_over_email_format():
+    with TestClient(app) as client:
+        r = client.post(
+            "/auth/register",
+            data={"name": "admin", "email": "bad-email", "password": "secret12"},
+        )
+        assert "Пользователь с таким username уже существует в системе" in r.text
+        assert "Проверьте корректность e-mail" not in r.text
+
+
 def test_editor_permissions():
     editor_email = f"editor-{uuid.uuid4().hex[:8]}@example.com"
     editor_name = f"Editor{uuid.uuid4().hex[:8]}"

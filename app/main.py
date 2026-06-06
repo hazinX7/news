@@ -28,7 +28,7 @@ def on_startup() -> None:
         if not admin:
             admin = User(email="admin@lentadnya.local")
             db.add(admin)
-        admin.name = "Администратор"
+        admin.name = "admin"
         admin.password_hash = sha256("admin123")
         admin.role = "admin"
 
@@ -36,7 +36,7 @@ def on_startup() -> None:
         if not editor:
             editor = User(email="editor@lentadnya.local")
             db.add(editor)
-        editor.name = "Редактор"
+        editor.name = "editor"
         editor.password_hash = sha256("editor123")
         editor.role = "editor"
 
