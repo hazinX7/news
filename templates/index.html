@@ -1,6 +1,21 @@
 {% extends 'base.html' %}
 {% block content %}
 <h1>Свежие новости</h1>
+
+<form method="get" action="/" class="filters">
+  <input name="q" value="{{ filters.q or '' }}" placeholder="Поиск по заголовку или тексту" />
+  <input type="date" name="date_from" value="{{ filters.date_from or '' }}" />
+  <input type="date" name="date_to" value="{{ filters.date_to or '' }}" />
+  <select name="sort">
+    <option value="newest" {% if filters.sort == 'newest' %}selected{% endif %}>Сначала новые</option>
+    <option value="oldest" {% if filters.sort == 'oldest' %}selected{% endif %}>Сначала старые</option>
+    <option value="likes" {% if filters.sort == 'likes' %}selected{% endif %}>Больше лайков</option>
+    <option value="dislikes" {% if filters.sort == 'dislikes' %}selected{% endif %}>Больше дизлайков</option>
+  </select>
+  <button type="submit">Применить</button>
+  <a href="/" class="reset-link">Сбросить</a>
+</form>
+
 {% if news %}
   <section class="cards">
     {% for item in news %}

@@ -10,21 +10,17 @@
 - `app/db.py` — подключение к БД и сессии.
 - `templates/`, `static/` — UI.
 
-## Локальный запуск
+## Запуск в Docker
 
 ```bash
-python3 -m venv .venv
-.venv/bin/pip install -r requirements.txt
-.venv/bin/python main.py
-```
-
-## Запуск в Docker (два контейнера: app + db)
-
-```bash
-docker compose up --build
+docker compose -p news up -d --build
 ```
 
 Приложение: `http://127.0.0.1:8000`
+
+PostgreSQL доступен с хоста на `localhost:5432`.
+
+При старте выполняется SQL-скрипт `db/init/001_schema_seed.sql`: он создает таблицы и заполняет БД тестовыми пользователями и новостями.
 
 Администратор (тест):
 
@@ -35,3 +31,16 @@ docker compose up --build
 
 - `editor@lentadnya.local`
 - `editor123`
+
+Обычные пользователи (тест):
+
+- `anna@example.local`
+- `igor@example.local`
+- `maria@example.local`
+- `pavel@example.local`
+- `olga@example.local`
+- `denis@example.local`
+- `elena@example.local`
+- `nikita@example.local`
+
+Пароль для обычных пользователей: `user12345`

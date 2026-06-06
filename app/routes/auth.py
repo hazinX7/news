@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, Form, Request
 from pydantic import ValidationError
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.deps import get_db
@@ -10,6 +11,10 @@ from app.web import redirect, render
 
 
 router = APIRouter(prefix="/auth")
+
+
+def contains_cyrillic(value: str) -> bool:
+    return any("а" <= char.lower() <= "я" or char.lower() == "ё" for char in value)
 
 
 @router.get("/register")
@@ -25,15 +30,24 @@ def register(
     password: str = Form(...),
     db: Session = Depends(get_db),
 ):
+    clean_name = name.strip()
+    clean_email = email.strip().lower()
+    if contains_cyrillic(clean_name):
+        return render(request, "register.html", {"db": db, "error": "Имя пользователя не должно содержать русские символы"})
+    if contains_cyrillic(clean_email):
+        return render(request, "register.html", {"db": db, "error": "E-mail не должен содержать русские символы"})
+
     try:
-        form = RegisterForm(name=name.strip(), email=email.strip(), password=password)
+        form = RegisterForm(name=clean_name, email=clean_email, password=password)
     except ValidationError:
         return render(request, "register.html", {"db": db, "error": "Проверьте корректность e-mail"})
 
     if len(form.name) < 2 or len(password) < 6:
         return render(request, "register.html", {"db": db, "error": "Имя от 2 символов, пароль от 6 символов"})
     if db.query(User).filter(User.email == form.email).first():
-        return render(request, "register.html", {"db": db, "error": "Пользователь уже существует"})
+        return render(request, "register.html", {"db": db, "error": "Пользователь с таким email уже существует в системе"})
+    if db.query(User).filter(func.lower(User.name) == form.name.lower()).first():
+        return render(request, "register.html", {"db": db, "error": "Пользователь с таким username уже существует в системе"})
 
     user = User(name=form.name, email=form.email, password_hash=sha256(password), role="user")
     db.add(user)
@@ -67,4 +81,3 @@ def login(
 def logout(request: Request):
     request.session.clear()
     return redirect("/")
-

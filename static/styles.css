@@ -57,6 +57,27 @@ nav form { margin: 0; }
 .container { max-width: 980px; margin: 24px auto; padding: 0 16px; }
 .container > * + * { margin-top: 20px; }
 .cards { display: grid; gap: 12px; }
+.filters {
+  display: grid;
+  grid-template-columns: minmax(240px, 2fr) 150px 150px minmax(160px, 1fr) auto auto;
+  gap: 10px;
+  align-items: center;
+  margin-bottom: 18px;
+}
+.filters input,
+.filters select {
+  width: 100%;
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  padding: 10px 12px;
+  font: inherit;
+  background: #fff;
+}
+.reset-link {
+  color: var(--accent-dark);
+  text-decoration: none;
+  white-space: nowrap;
+}
 .card, .article, .comment, .admin-item {
   background: var(--card);
   border: 1px solid #e5e7eb;
@@ -185,4 +206,5 @@ input[type="checkbox"] {
   .search { width: 100%; }
   nav { justify-content: flex-start; }
   .admin-grid { grid-template-columns: 1fr; }
+  .filters { grid-template-columns: 1fr; }
 }

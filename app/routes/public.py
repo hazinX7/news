@@ -1,3 +1,5 @@
+from datetime import datetime, time
+
 from fastapi import APIRouter, Depends, Form, HTTPException, Request
 from sqlalchemy import case, func
 from sqlalchemy.orm import Session
@@ -31,17 +33,65 @@ def build_comment_reaction_counts(db: Session, comment_ids: list[int]):
     return {row.comment_id: {"likes": int(row.likes or 0), "dislikes": int(row.dislikes or 0)} for row in rows}
 
 
+def parse_date_start(value: str | None):
+    if not value:
+        return None
+    try:
+        return datetime.combine(datetime.fromisoformat(value).date(), time.min)
+    except ValueError:
+        return None
+
+
+def parse_date_end(value: str | None):
+    if not value:
+        return None
+    try:
+        return datetime.combine(datetime.fromisoformat(value).date(), time.max)
+    except ValueError:
+        return None
+
+
 @router.get("/")
-def index(request: Request, q: str = "", db: Session = Depends(get_db)):
+def index(
+    request: Request,
+    q: str = "",
+    date_from: str = "",
+    date_to: str = "",
+    sort: str = "newest",
+    db: Session = Depends(get_db),
+):
     query = db.query(News).filter(News.is_published.is_(True))
     if q.strip():
         pattern = f"%{q.strip()}%"
         query = query.filter((News.title.ilike(pattern)) | (News.content.ilike(pattern)))
+    parsed_date_from = parse_date_start(date_from)
+    parsed_date_to = parse_date_end(date_to)
+    if parsed_date_from:
+        query = query.filter(News.created_at >= parsed_date_from)
+    if parsed_date_to:
+        query = query.filter(News.created_at <= parsed_date_to)
     rows = query.order_by(News.created_at.desc()).all()
 
     reactions = build_reaction_counts(db)
+    if sort == "oldest":
+        rows = sorted(rows, key=lambda item: item.created_at)
+    elif sort == "likes":
+        rows = sorted(rows, key=lambda item: reactions.get(item.id, {}).get("likes", 0), reverse=True)
+    elif sort == "dislikes":
+        rows = sorted(rows, key=lambda item: reactions.get(item.id, {}).get("dislikes", 0), reverse=True)
 
-    return render(request, "index.html", {"db": db, "news": rows, "q": q, "reactions": reactions})
+    filters = {
+        "q": q,
+        "date_from": date_from,
+        "date_to": date_to,
+        "sort": sort,
+    }
+
+    return render(
+        request,
+        "index.html",
+        {"db": db, "news": rows, "q": q, "reactions": reactions, "filters": filters},
+    )
 
 
 @router.get("/news/{news_id}")

@@ -16,12 +16,25 @@ services:
       timeout: 3s
       retries: 10
 
+  db-seed:
+    image: postgres:16-alpine
+    container_name: news_db_seed
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      PGPASSWORD: lentadnya
+    volumes:
+      - ./db/init/001_schema_seed.sql:/seed/001_schema_seed.sql:ro
+    command: ["psql", "-h", "db", "-U", "lentadnya", "-d", "lentadnya", "-f", "/seed/001_schema_seed.sql"]
+    restart: "no"
+
   app:
     build: .
     container_name: news_app
     depends_on:
-      db:
-        condition: service_healthy
+      db-seed:
+        condition: service_completed_successfully
     environment:
       DATABASE_URL: postgresql+psycopg://lentadnya:lentadnya@db:5432/lentadnya
       SESSION_SECRET: super-secret-session-key
@@ -31,4 +44,3 @@ services:
 
 volumes:
   postgres_data:
-
